@@ -29,4 +29,10 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.OK).body(deletedPost);
     }
 
+    @PutMapping("/post/{title}")
+    public ResponseEntity<Post> edit(@RequestBody Post post, @PathVariable String title) throws NotOwnerException, PostDoesNotExistException {
+        var editedPost = service.edit(post.getCreator(), title, post.getContent());
+        return ResponseEntity.status(HttpStatus.OK).body(editedPost);
+    }
+
 }
