@@ -2,7 +2,10 @@ package me.code.uppgift3projekt.controllers;
 
 import lombok.AllArgsConstructor;
 import me.code.uppgift3projekt.data.Post;
+import me.code.uppgift3projekt.data.User;
+import me.code.uppgift3projekt.exception.NotOwnerException;
 import me.code.uppgift3projekt.exception.PostAlreadyExistsException;
+import me.code.uppgift3projekt.exception.PostDoesNotExistException;
 import me.code.uppgift3projekt.service.PostService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,5 +23,10 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.CREATED).body(newPost);
     }
 
+    @DeleteMapping("/post/{title}")
+    public ResponseEntity<Post> delete(@RequestBody User user, @PathVariable String title) throws NotOwnerException, PostDoesNotExistException {
+        var deletedPost = service.delete(user, title);
+        return ResponseEntity.status(HttpStatus.OK).body(deletedPost);
+    }
 
 }
