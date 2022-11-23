@@ -6,11 +6,9 @@ import me.code.uppgift3projekt.exception.UserAlreadyExistsException;
 import me.code.uppgift3projekt.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
 import java.util.Map;
 
 @RestController
@@ -24,5 +22,11 @@ public class UserController {
     public ResponseEntity<User> register(@RequestBody Map<String, String> user) throws UserAlreadyExistsException {
         var newUser = service.register(user.get("username"), user.get("password"));
         return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
+    }
+
+    @GetMapping
+    public ResponseEntity<Collection<User>> getAll() {
+        var allUsers = service.getAll();
+        return ResponseEntity.ok(allUsers);
     }
 }
