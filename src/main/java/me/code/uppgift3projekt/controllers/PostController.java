@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
+
 @AllArgsConstructor
 @RestController
 public class PostController {
@@ -33,6 +35,12 @@ public class PostController {
     public ResponseEntity<Post> edit(@RequestBody Post post, @PathVariable String title) throws NotOwnerException, PostDoesNotExistException {
         var editedPost = service.edit(post.getCreator(), title, post.getContent());
         return ResponseEntity.status(HttpStatus.OK).body(editedPost);
+    }
+
+    @GetMapping("/post")
+    public ResponseEntity<Collection<Post>> getAll() {
+        var allPosts = service.getAll();
+        return ResponseEntity.ok(allPosts);
     }
 
 }
