@@ -1,9 +1,13 @@
 package me.code.uppgift3projekt.security;
 
 import com.nimbusds.jose.jwk.JWK;
+import com.nimbusds.jose.jwk.JWKSet;
+import com.nimbusds.jose.jwk.RSAKey;
+import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -22,7 +26,10 @@ import javax.crypto.spec.SecretKeySpec;
 
 @Configuration
 @EnableWebSecurity
+@AllArgsConstructor
 public class SecurityConfig {
+
+    private final RSAKeyProperties keyProperties;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
@@ -40,14 +47,13 @@ public class SecurityConfig {
 
     @Bean
     public JwtDecoder jwtDecoder(){
-        SecretKey secretKey = new SecretKeySpec("ThisIsASecret".getBytes(), "HmacSHA256");
-        return NimbusJwtDecoder.withSecretKey(secretKey).build();
+        return NimbusJwtDecoder.withPublicKey(keyProperties.publicKey()).build();
     }
 
     @Bean
     public JwtEncoder jwtEncoder(){
-        SecretKey secretKey = new SecretKeySpec("ThisIsASecret".getBytes(), "HmacSHA256");
-        JWKSource<SecurityContext> immutableSecret = new ImmutableSecret<>(secretKey);
+        JWK jwk = new RSAKey.Builder(keyProperties.publicKey()).privateKey(keyProperties.privateKey()).build();
+        JWKSource<SecurityContext> immutableSecret = new ImmutableJWKSet<>(new JWKSet(jwk));
         return new NimbusJwtEncoder(immutableSecret);
     }
 }

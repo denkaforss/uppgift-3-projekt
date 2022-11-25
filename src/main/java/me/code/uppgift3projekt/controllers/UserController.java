@@ -34,9 +34,9 @@ public class UserController {
     }
 
     @PostMapping("/token")
-    public ResponseEntity<String> token(Authentication auth) {
+    public String token(Authentication auth) {
         var generatedToken = token.generateToken(auth);
         System.out.println(generatedToken);
-        return ResponseEntity.status(HttpStatus.OK).header("Authorization", generatedToken).build();
+        return token.generateToken(auth);
     }
 }
