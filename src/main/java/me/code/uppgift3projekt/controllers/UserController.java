@@ -33,10 +33,10 @@ public class UserController {
         return ResponseEntity.ok(allUsers);
     }
 
-    @PostMapping("/token")
-    public String token(Authentication auth) {
+    @PostMapping("/login")
+    public ResponseEntity<String> token(Authentication auth) {
         var generatedToken = token.generateToken(auth);
         System.out.println(generatedToken);
-        return token.generateToken(auth);
+        return ResponseEntity.ok().header("Authorization", generatedToken).body("");
     }
 }
