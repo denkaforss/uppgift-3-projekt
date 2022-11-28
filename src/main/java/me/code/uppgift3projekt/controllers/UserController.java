@@ -5,6 +5,7 @@ import me.code.uppgift3projekt.dto.UserDTO;
 import me.code.uppgift3projekt.exception.UserAlreadyExistsException;
 import me.code.uppgift3projekt.security.TokenService;
 import me.code.uppgift3projekt.service.UserService;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -38,6 +39,6 @@ public class UserController {
     public ResponseEntity<String> token(Authentication auth) {
         var generatedToken = token.generateToken(auth);
         System.out.println(generatedToken);
-        return ResponseEntity.ok().header("Authorization", generatedToken).body("");
+        return ResponseEntity.ok().header(HttpHeaders.AUTHORIZATION, generatedToken).body("");
     }
 }
