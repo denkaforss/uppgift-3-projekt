@@ -18,29 +18,30 @@ import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @RestController
+@RequestMapping("/post")
 public class PostController {
 
     private final PostService service;
 
-    @PostMapping("/post")
+    @PostMapping
     public ResponseEntity<PostDTO> create(@RequestBody Post post) throws PostAlreadyExistsException {
         var newPost = service.create(post.getCreator(), post.getTitle(), post.getContent());
         return ResponseEntity.status(HttpStatus.CREATED).body(new PostDTO(newPost.getContent(), newPost.getTitle(), newPost.getCreator().getUsername()));
     }
 
-    @DeleteMapping("/post/{title}")
+    @DeleteMapping("/{title}")
     public ResponseEntity<PostDTO> delete(@RequestBody User user, @PathVariable String title) throws NotOwnerException, PostDoesNotExistException {
         var deletedPost = service.delete(user, title);
         return ResponseEntity.status(HttpStatus.OK).body(new PostDTO(deletedPost.getContent(), deletedPost.getTitle(), deletedPost.getCreator().getUsername()));
     }
 
-    @PutMapping("/post/{title}")
+    @PutMapping("/{title}")
     public ResponseEntity<PostDTO> edit(@RequestBody Post post, @PathVariable String title) throws NotOwnerException, PostDoesNotExistException {
         var editedPost = service.edit(post.getCreator(), title, post.getContent());
         return ResponseEntity.status(HttpStatus.OK).body(new PostDTO(editedPost.getContent(), editedPost.getTitle(), editedPost.getCreator().getUsername()));
     }
 
-    @GetMapping("/post")
+    @GetMapping
     public ResponseEntity<Collection<PostDTO>> getAll() {
         var allPosts = service.getAll();
         return ResponseEntity.ok(allPosts.stream().map(post -> new PostDTO(post.getContent(), post.getTitle(), post.getCreator().getUsername())).collect(Collectors.toList()));
