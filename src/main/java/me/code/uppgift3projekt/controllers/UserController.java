@@ -1,7 +1,7 @@
 package me.code.uppgift3projekt.controllers;
 
 import lombok.AllArgsConstructor;
-import me.code.uppgift3projekt.data.User;
+import me.code.uppgift3projekt.dto.UserDTO;
 import me.code.uppgift3projekt.exception.UserAlreadyExistsException;
 import me.code.uppgift3projekt.security.TokenService;
 import me.code.uppgift3projekt.service.UserService;
@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/user")
@@ -22,15 +23,15 @@ public class UserController {
     private final TokenService token;
 
     @PostMapping
-    public ResponseEntity<User> register(@RequestBody Map<String, String> user) throws UserAlreadyExistsException {
+    public ResponseEntity<UserDTO> register(@RequestBody Map<String, String> user) throws UserAlreadyExistsException {
         var newUser = service.register(user.get("username"), user.get("password"));
-        return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new UserDTO(user.get("username")));
     }
 
     @GetMapping
-    public ResponseEntity<Collection<User>> getAll() {
+    public ResponseEntity<Collection<UserDTO>> getAll() {
         var allUsers = service.getAll();
-        return ResponseEntity.ok(allUsers);
+        return ResponseEntity.ok(allUsers.stream().map(user -> new UserDTO(user.getUsername())).collect(Collectors.toList()));
     }
 
     @PostMapping("/login")

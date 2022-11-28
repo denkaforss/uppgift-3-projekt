@@ -3,6 +3,8 @@ package me.code.uppgift3projekt.controllers;
 import lombok.AllArgsConstructor;
 import me.code.uppgift3projekt.data.Post;
 import me.code.uppgift3projekt.data.User;
+import me.code.uppgift3projekt.dto.PostDTO;
+import me.code.uppgift3projekt.dto.UserDTO;
 import me.code.uppgift3projekt.exception.NotOwnerException;
 import me.code.uppgift3projekt.exception.PostAlreadyExistsException;
 import me.code.uppgift3projekt.exception.PostDoesNotExistException;
@@ -12,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @RestController
@@ -20,27 +23,27 @@ public class PostController {
     private final PostService service;
 
     @PostMapping("/post")
-    public ResponseEntity<Post> create(@RequestBody Post post) throws PostAlreadyExistsException {
+    public ResponseEntity<PostDTO> create(@RequestBody Post post) throws PostAlreadyExistsException {
         var newPost = service.create(post.getCreator(), post.getTitle(), post.getContent());
-        return ResponseEntity.status(HttpStatus.CREATED).body(newPost);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new PostDTO(newPost.getContent(), newPost.getTitle(), newPost.getCreator().getUsername()));
     }
 
     @DeleteMapping("/post/{title}")
-    public ResponseEntity<Post> delete(@RequestBody User user, @PathVariable String title) throws NotOwnerException, PostDoesNotExistException {
+    public ResponseEntity<PostDTO> delete(@RequestBody User user, @PathVariable String title) throws NotOwnerException, PostDoesNotExistException {
         var deletedPost = service.delete(user, title);
-        return ResponseEntity.status(HttpStatus.OK).body(deletedPost);
+        return ResponseEntity.status(HttpStatus.OK).body(new PostDTO(deletedPost.getContent(), deletedPost.getTitle(), deletedPost.getCreator().getUsername()));
     }
 
     @PutMapping("/post/{title}")
-    public ResponseEntity<Post> edit(@RequestBody Post post, @PathVariable String title) throws NotOwnerException, PostDoesNotExistException {
+    public ResponseEntity<PostDTO> edit(@RequestBody Post post, @PathVariable String title) throws NotOwnerException, PostDoesNotExistException {
         var editedPost = service.edit(post.getCreator(), title, post.getContent());
-        return ResponseEntity.status(HttpStatus.OK).body(editedPost);
+        return ResponseEntity.status(HttpStatus.OK).body(new PostDTO(editedPost.getContent(), editedPost.getTitle(), editedPost.getCreator().getUsername()));
     }
 
     @GetMapping("/post")
-    public ResponseEntity<Collection<Post>> getAll() {
+    public ResponseEntity<Collection<PostDTO>> getAll() {
         var allPosts = service.getAll();
-        return ResponseEntity.ok(allPosts);
+        return ResponseEntity.ok(allPosts.stream().map(post -> new PostDTO(post.getContent(), post.getTitle(), post.getCreator().getUsername())).collect(Collectors.toList()));
     }
 
 }
