@@ -26,6 +26,9 @@ public class PostService {
             throws PostAlreadyExistsException
     {
         var existing = repository.getByTitle(title);
+        if (title.isBlank()) {
+            throw new IllegalArgumentException("Title can not be empty.");
+        }
         if (existing.isPresent())
             throw new PostAlreadyExistsException();
 

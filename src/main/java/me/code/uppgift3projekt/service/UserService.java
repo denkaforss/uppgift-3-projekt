@@ -39,6 +39,9 @@ public class UserService implements UserDetailsService {
             throws UserAlreadyExistsException
     {
         var existing = repository.getByUsername(username);
+        if (username.isBlank() || password.isBlank()) {
+            throw new IllegalArgumentException("Username or Password can not be empty.");
+        }
         if (existing.isPresent())
             throw new UserAlreadyExistsException();
 
