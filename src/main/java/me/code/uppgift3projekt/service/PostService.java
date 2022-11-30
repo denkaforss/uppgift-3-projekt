@@ -10,7 +10,9 @@ import me.code.uppgift3projekt.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Collection;
+
 
 @Service
 public class PostService {
@@ -32,7 +34,7 @@ public class PostService {
         if (existing.isPresent())
             throw new PostAlreadyExistsException();
 
-        var post = new Post(title, content, user);
+        var post = new Post(title, content, user, LocalDate.now());
         repository.save(post);
 
         return post;
