@@ -39,6 +39,6 @@ public class UserController {
     public ResponseEntity<String> token(Authentication auth) {
         var generatedToken = token.generateToken(auth);
         System.out.println(generatedToken);
-        return ResponseEntity.ok().header(HttpHeaders.AUTHORIZATION, generatedToken).body("");
+        return ResponseEntity.ok().header(HttpHeaders.AUTHORIZATION, generatedToken).body(generatedToken);
     }
 }
